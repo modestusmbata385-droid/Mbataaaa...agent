@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0e1b1a">
+<title>MBATA AGENT</title>
+<style>
+:root{
+  --bg:#0e1b1a;--surface:#152624;--surface2:#1d332f;
+  --line:#2a423c;--text:#eaf2ef;--muted:#8fa89f;
+  --accent:#d9a441;--ok:#5fb088;--bad:#e2665b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}
+body{font:14px Inter,Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.auth{
+  min-height:100vh;display:grid;place-items:center;padding:20px;
+}
+.box{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:24px;width:min(420px,100%);
+  animation:fadeSlideUp .5s ease both;
+}
+.logo-auth{
+  width:150px;height:150px;object-fit:contain;display:block;
+  margin:0 auto 10px;
+  animation:floatY 3.2s ease-in-out infinite;
+}
+.brand{text-align:center}
+.brand h1{margin:0 0 8px;font-size:30px;letter-spacing:.3px}
+.brand p{margin:0 0 22px;color:var(--muted);font-size:16px}
+h1,h2,h3{margin:0 0 10px}
+label{display:block;color:var(--muted);margin:12px 0 5px}
+input,select{
+  width:100%;padding:11px;border-radius:7px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--text);outline:none;
+}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(217,164,65,.12)}
+button{
+  padding:10px 13px;border-radius:7px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--text);
+}
+.primary{
+  background:var(--accent);color:#171108;border:0;font-weight:700;
+  width:100%;margin-top:18px;
+}
+.primary:hover{filter:brightness(1.08)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.link{
+  background:none;border:0;color:var(--accent);padding:0;
+}
+.links{display:flex;justify-content:space-between;margin-top:18px;gap:12px}
+.msg{padding:9px;margin:12px 0;border-radius:7px}
+.ok{background:#163428;color:#a8e1c3}
+.err{background:#3a1e1b;color:#ffaaa1}
+.small{font-size:12px}
+.muted{color:var(--muted)}
+
+@keyframes fadeSlideUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes floatY{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+</style>
+</head>
+<body>
+
+<div id="auth" class="auth">
+  <div class="box">
+
+    <img
+      src="./mbata-agent-logo.png"
+      alt="MBATA AGENT"
+      class="logo-auth"
+      onerror="this.style.display='none';document.getElementById('logoFallback').classList.remove('hidden')"
+    >
+
+    <div id="logoFallback" class="hidden" style="text-align:center;font-weight:800;font-size:26px;margin-bottom:18px">
+      MBATA AGENT
+    </div>
+
+    <div class="brand">
+      <h1>MBATA AGENT</h1>
+      <p>Finance • Business • Boss Connect • Education</p>
+    </div>
+
+    <form id="loginForm" autocomplete="on">
+      <h2>Ingia</h2>
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="Ingiza email yako" autocomplete="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" placeholder="Ingiza password yako" autocomplete="current-password" required>
+
+      <div id="message" class="msg hidden"></div>
+
+      <button class="primary" type="submit">Ingia</button>
+
+      <div class="links">
+        <button type="button" class="link" id="registerBtn">Fungua akaunti</button>
+        <button type="button" class="link" id="forgotBtn">Umesahau password?</button>
+      </div>
+    </form>
+
+    <div id="registerPanel" class="hidden">
+      <h2>Fungua akaunti</h2>
+      <p class="muted">Usajili wa akaunti mpya.</p>
+
+      <label for="regName">Jina</label>
+      <input id="regName" type="text" placeholder="Jina lako">
+
+      <label for="regEmail">Email</label>
+      <input id="regEmail" type="email" placeholder="Email yako">
+
+      <label for="regPassword">Password</label>
+      <input id="regPassword" type="password" placeholder="Password mpya">
+
+      <button class="primary" type="button" id="createBtn">Fungua akaunti</button>
+      <p style="margin-top:18px"><button type="button" class="link" id="backLogin">← Rudi Ingia</button></p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const msg = (text, type='ok') => {
+  $('message').textContent = text;
+  $('message').className = 'msg ' + type;
+};
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  msg('Login UI iko tayari. Backend yako ndiyo itaunganisha authentication.', 'ok');
+});
+
+$('registerBtn').onclick = () => {
+  $('loginForm').classList.add('hidden');
+  $('registerPanel').classList.remove('hidden');
+};
+
+$('backLogin').onclick = () => {
+  $('registerPanel').classList.add('hidden');
+  $('loginForm').classList.remove('hidden');
+};
+
+$('forgotBtn').onclick = () => {
+  msg('Weka email yako ili mfumo wa backend utume reset link/OTP.', 'ok');
+};
+
+$('createBtn').onclick = () => {
+  msg('Usajili wa frontend uko tayari; endpoint ya backend itaongezwa kwenye form hii.', 'ok');
+};
+</script>
+</body>
+</html>
